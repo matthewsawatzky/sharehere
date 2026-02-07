@@ -57,16 +57,7 @@ func Run(ctx context.Context, opts Options) error {
 		}
 		opts.RootDir = cwd
 	}
-	if opts.BasePath == "" {
-		opts.BasePath = "/"
-	}
-	if !strings.HasPrefix(opts.BasePath, "/") {
-		opts.BasePath = "/" + opts.BasePath
-	}
-	opts.BasePath = strings.TrimRight(opts.BasePath, "/")
-	if opts.BasePath == "" {
-		opts.BasePath = "/"
-	}
+	opts.BasePath = config.NormalizeBasePath(opts.BasePath)
 
 	rootAbs, err := filepath.Abs(opts.RootDir)
 	if err != nil {
@@ -191,6 +182,13 @@ func (a *App) route(p string) string {
 		return a.opts.BasePath + "/"
 	}
 	return a.opts.BasePath + p
+}
+
+func (a *App) templateBasePath() string {
+	if a.opts.BasePath == "/" {
+		return ""
+	}
+	return a.opts.BasePath
 }
 
 func (a *App) parseRelative(r *http.Request, key string) string {
@@ -375,7 +373,7 @@ func (a *App) effectiveSettings() db.AppSettings {
 	s, err := a.store.GetAppSettings()
 	if err != nil {
 		return db.AppSettings{
-			GuestMode:          config.GuestOff,
+			GuestMode:          config.GuestRead,
 			MaxUploadSizeMB:    1024,
 			CollisionPolicy:    config.CollisionRename,
 			DefaultShareExpiry: "24h",

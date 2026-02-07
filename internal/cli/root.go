@@ -268,11 +268,30 @@ func runServe(cmd *cobra.Command, state *rootState, flags *serveFlags, pathArg s
 		fallback := fmt.Sprintf("%s://127.0.0.1:%d%s", scheme, opts.Port, opts.BasePath)
 		fmt.Printf("  - %s\n", fallback)
 	}
+	printAdminSetupHint(cfg)
 	fmt.Println("Press Ctrl+C to stop.")
 
 	ctx, cancel := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
 	defer cancel()
 	return server.Run(ctx, opts)
+}
+
+func printAdminSetupHint(cfg config.Config) {
+	if cfg.Auth == config.AuthOff {
+		return
+	}
+	store, err := db.Open(cfg.DataDir)
+	if err != nil {
+		return
+	}
+	defer store.Close()
+	admins, err := store.AdminCount()
+	if err != nil || admins > 0 {
+		return
+	}
+	fmt.Println("Setup required: no admin user is configured yet.")
+	fmt.Println("Guests can browse according to guest mode, but admin features stay locked.")
+	fmt.Println("Create an admin now: sharehere user add --role admin <username>")
 }
 
 func runInit(state *rootState) error {
@@ -291,19 +310,45 @@ func runInit(state *rootState) error {
 
 	r := bufio.NewReader(os.Stdin)
 	fmt.Println("sharehere first-run setup")
-	cfg.DataDir = askWithDefault(r, "Data directory", cfg.DataDir)
-	cfg.Bind = askWithDefault(r, "Bind address", cfg.Bind)
-	cfg.Port = askIntWithDefault(r, "Port", cfg.Port)
-	cfg.Auth = strings.ToLower(askWithDefault(r, "Authentication (on/off)", cfg.Auth))
-	cfg.GuestMode = strings.ToLower(askWithDefault(r, "Guest mode (off/read/upload)", cfg.GuestMode))
-	cfg.BasePath = config.NormalizeBasePath(askWithDefault(r, "Base path", cfg.BasePath))
-	cfg.Theme = askWithDefault(r, "Default theme", cfg.Theme)
-	cfg.DefaultShareExpiry = askWithDefault(r, "Default share expiry", cfg.DefaultShareExpiry)
-	cfg.CollisionPolicy = strings.ToLower(askWithDefault(r, "Collision policy (rename/overwrite)", cfg.CollisionPolicy))
-	cfg.MaxUploadSizeMB = int64(askIntWithDefault(r, "Max upload size MB", int(cfg.MaxUploadSizeMB)))
-	cfg.AllowDelete = askBoolWithDefault(r, "Enable delete", cfg.AllowDelete)
-	cfg.AllowRename = askBoolWithDefault(r, "Enable rename/move", cfg.AllowRename)
-	cfg.ReadOnly = askBoolWithDefault(r, "Read-only mode", cfg.ReadOnly)
+
+	if askBoolWithDefault(r, "Use recommended defaults (guest browsing enabled)", true) {
+		cfg.Auth = config.AuthOn
+		cfg.GuestMode = config.GuestRead
+		cfg.ReadOnly = false
+		cfg.AllowDelete = false
+		cfg.AllowRename = false
+		cfg.BasePath = "/"
+		cfg.Bind = "0.0.0.0"
+		cfg.Port = 7331
+		cfg.CollisionPolicy = config.CollisionRename
+		cfg.DefaultShareExpiry = "24h"
+		cfg.MaxUploadSizeMB = 1024
+		cfg.Theme = "light"
+
+		fmt.Println("Applied defaults:")
+		fmt.Println("  auth=on, guest-mode=read, readonly=false")
+		fmt.Println("  delete/rename disabled for non-admin users")
+		fmt.Println("  uploads allowed for authenticated users")
+
+		cfg.DataDir = askWithDefault(r, "Data directory", cfg.DataDir)
+		cfg.Bind = askWithDefault(r, "Bind address", cfg.Bind)
+		cfg.Port = askIntWithDefault(r, "Port", cfg.Port)
+		cfg.BasePath = config.NormalizeBasePath(askWithDefault(r, "Base path", cfg.BasePath))
+	} else {
+		cfg.DataDir = askWithDefault(r, "Data directory", cfg.DataDir)
+		cfg.Bind = askWithDefault(r, "Bind address", cfg.Bind)
+		cfg.Port = askIntWithDefault(r, "Port", cfg.Port)
+		cfg.Auth = strings.ToLower(askWithDefault(r, "Authentication (on/off)", cfg.Auth))
+		cfg.GuestMode = strings.ToLower(askWithDefault(r, "Guest mode (off/read/upload)", cfg.GuestMode))
+		cfg.BasePath = config.NormalizeBasePath(askWithDefault(r, "Base path", cfg.BasePath))
+		cfg.Theme = askWithDefault(r, "Default theme", cfg.Theme)
+		cfg.DefaultShareExpiry = askWithDefault(r, "Default share expiry", cfg.DefaultShareExpiry)
+		cfg.CollisionPolicy = strings.ToLower(askWithDefault(r, "Collision policy (rename/overwrite)", cfg.CollisionPolicy))
+		cfg.MaxUploadSizeMB = int64(askIntWithDefault(r, "Max upload size MB", int(cfg.MaxUploadSizeMB)))
+		cfg.AllowDelete = askBoolWithDefault(r, "Enable delete", cfg.AllowDelete)
+		cfg.AllowRename = askBoolWithDefault(r, "Enable rename/move", cfg.AllowRename)
+		cfg.ReadOnly = askBoolWithDefault(r, "Read-only mode", cfg.ReadOnly)
+	}
 
 	if err := config.Validate(cfg); err != nil {
 		return err

@@ -11,5 +11,5 @@ func PrintTerminalQR(value string) {
 	if err != nil {
 		return
 	}
-	fmt.Println(qr.ToString(false))
+	fmt.Println(qr.ToSmallString(false))
 }

@@ -24,7 +24,7 @@ func (a *App) handleIndex(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	data := map[string]any{
-		"BasePath": a.opts.BasePath,
+		"BasePath": a.templateBasePath(),
 		"Version":  a.opts.Version,
 	}
 	if err := a.templates.ExecuteTemplate(w, "index.html", data); err != nil {
@@ -42,7 +42,7 @@ func (a *App) handleAdminPage(w http.ResponseWriter, r *http.Request) {
 	if !a.requireAdmin(w, r, perms) {
 		return
 	}
-	data := map[string]any{"BasePath": a.opts.BasePath, "Version": a.opts.Version}
+	data := map[string]any{"BasePath": a.templateBasePath(), "Version": a.opts.Version}
 	if err := a.templates.ExecuteTemplate(w, "admin.html", data); err != nil {
 		a.writeError(w, http.StatusInternalServerError, "render failed")
 	}
@@ -59,10 +59,7 @@ func (a *App) handleLogin(w http.ResponseWriter, r *http.Request) {
 			http.Redirect(w, r, a.route("/"), http.StatusSeeOther)
 			return
 		}
-		_ = a.templates.ExecuteTemplate(w, "login.html", map[string]any{
-			"BasePath":  a.opts.BasePath,
-			"CSRFToken": session.CSRFToken,
-		})
+		_ = a.templates.ExecuteTemplate(w, "login.html", a.loginTemplateData(session.CSRFToken, ""))
 		return
 	}
 	if r.Method != http.MethodPost {
@@ -148,11 +145,24 @@ func (a *App) failLogin(w http.ResponseWriter, csrfToken, key, username string) 
 
 func (a *App) renderLoginError(w http.ResponseWriter, csrfToken, message string) {
 	w.WriteHeader(http.StatusUnauthorized)
-	_ = a.templates.ExecuteTemplate(w, "login.html", map[string]any{
-		"BasePath":  a.opts.BasePath,
+	_ = a.templates.ExecuteTemplate(w, "login.html", a.loginTemplateData(csrfToken, message))
+}
+
+func (a *App) loginTemplateData(csrfToken, message string) map[string]any {
+	data := map[string]any{
+		"BasePath":  a.templateBasePath(),
 		"CSRFToken": csrfToken,
 		"Error":     message,
-	})
+	}
+	if a.opts.AuthMode == config.AuthOff {
+		return data
+	}
+	admins, err := a.store.AdminCount()
+	if err != nil || admins > 0 {
+		return data
+	}
+	data["SetupHint"] = "No admin account exists yet. Run `sharehere user add --role admin <username>` on the server."
+	return data
 }
 
 func (a *App) handleLogout(w http.ResponseWriter, r *http.Request) {

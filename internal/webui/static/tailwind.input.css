@@ -1,0 +1,310 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    color-scheme: light;
+  }
+
+  body {
+    @apply min-h-screen bg-[#f6f8fa] text-[#24292f] antialiased;
+  }
+
+  a {
+    @apply text-inherit;
+  }
+
+  h1 {
+    @apply m-0 text-[1.35rem] font-semibold tracking-[0.01em];
+  }
+
+  h2 {
+    @apply mb-3 mt-4 text-base font-semibold;
+  }
+
+  label {
+    @apply grid gap-1 text-sm text-[#24292f];
+  }
+
+  input,
+  select,
+  textarea,
+  button {
+    @apply rounded-md border border-[#d0d7de] bg-white px-3 py-2 text-sm text-[#24292f];
+  }
+
+  table {
+    @apply w-full border-collapse;
+  }
+
+  th,
+  td {
+    @apply border-b border-[#d8dee4] px-3 py-2 text-left align-middle text-sm;
+  }
+
+  th {
+    @apply bg-[#f6f8fa] font-semibold text-[#57606a];
+  }
+}
+
+@layer components {
+  .gh-site-header {
+    @apply border-b border-[#30363d] bg-[#24292f] text-white;
+  }
+
+  .gh-site-inner {
+    @apply mx-auto flex w-full max-w-[1400px] flex-wrap items-center justify-between gap-3 px-4 py-3;
+  }
+
+  .gh-brand {
+    @apply flex items-center gap-3;
+  }
+
+  .gh-brand-chip {
+    @apply flex h-9 w-9 items-center justify-center rounded-md border border-white/30 bg-white/10 text-sm font-bold;
+  }
+
+  .gh-main {
+    @apply mx-auto w-full max-w-[1400px] space-y-4 px-4 py-4;
+  }
+
+  .gh-pathbar {
+    @apply mb-2 flex items-center gap-2 text-sm;
+  }
+
+  .gh-owner {
+    @apply rounded-md bg-[#ddf4ff] px-2 py-1 font-medium text-[#0969da];
+  }
+
+  .gh-repo {
+    @apply rounded-md bg-[#eaeef2] px-2 py-1 font-semibold;
+  }
+
+  .gh-layout {
+    @apply grid grid-cols-1 gap-4 xl:grid-cols-[1.7fr_1fr];
+  }
+
+  .gh-files-panel {
+    @apply overflow-hidden p-0;
+  }
+
+  .gh-side-panel {
+    @apply self-start;
+  }
+
+  .gh-toolbar-top {
+    @apply flex flex-wrap items-center justify-between gap-2 border-b border-[#d8dee4] px-4 py-3;
+  }
+
+  .gh-toolbar-filters {
+    @apply flex flex-wrap items-center gap-2 border-b border-[#d8dee4] px-4 py-3;
+  }
+
+  .gh-toolbar-filters input {
+    @apply min-w-[220px] flex-1;
+  }
+
+  .gh-breadcrumbs {
+    @apply items-center gap-2;
+  }
+
+  .gh-crumb-btn {
+    @apply rounded-md border border-transparent bg-transparent px-1.5 py-1 text-sm text-[#0969da] hover:bg-[#ddf4ff] hover:text-[#0550ae];
+  }
+
+  .gh-breadcrumb-sep {
+    @apply text-[#57606a];
+  }
+
+  .panel {
+    @apply rounded-md border border-[#d0d7de] bg-white p-4;
+  }
+
+  .panel-muted {
+    @apply m-4 rounded-md border border-dashed border-[#d0d7de] p-3;
+  }
+
+  .topbar {
+    @apply flex flex-wrap items-center justify-between gap-3 border-b border-[#d8dee4] bg-white px-4 py-3;
+  }
+
+  .admin-grid {
+    @apply grid grid-cols-1 gap-4 p-4 xl:grid-cols-2;
+  }
+
+  .row {
+    @apply flex flex-wrap items-center gap-2;
+  }
+
+  .stack {
+    @apply grid gap-2;
+  }
+
+  .button {
+    @apply inline-flex items-center justify-center rounded-md border border-[#1f6feb] bg-[#1f6feb] px-3 py-2 text-sm font-medium text-white no-underline hover:bg-[#1a5fc2];
+  }
+
+  button.ghost,
+  .button.ghost {
+    @apply border border-[#d0d7de] bg-[#f6f8fa] text-[#24292f] hover:bg-[#f3f4f6];
+  }
+
+  .view-toggle .button.active {
+    @apply border-[#1f6feb] bg-[#1f6feb] text-white;
+  }
+
+  .muted {
+    @apply text-[#57606a];
+  }
+
+  .small {
+    @apply text-xs;
+  }
+
+  .error {
+    @apply text-red-700;
+  }
+
+  .notice {
+    @apply rounded-md border border-amber-300 bg-amber-50 p-3 text-amber-900;
+  }
+
+  .remember-row {
+    @apply flex items-center gap-2;
+  }
+
+  .table-wrap {
+    @apply overflow-x-auto;
+  }
+
+  .gh-row:hover td {
+    @apply bg-[#f6f8fa];
+  }
+
+  .gh-file-cell {
+    @apply flex items-center gap-2;
+  }
+
+  .gh-file-icon {
+    @apply inline-flex h-4 w-4 items-center justify-center;
+  }
+
+  .gh-hidden-pill {
+    @apply rounded-full border border-[#d0d7de] bg-[#f6f8fa] px-2 py-0.5 text-[10px] uppercase tracking-wide text-[#57606a];
+  }
+
+  .entry-link {
+    @apply font-medium text-[#0969da] no-underline hover:underline;
+  }
+
+  .file-grid {
+    @apply grid grid-cols-1 gap-3 p-4 md:grid-cols-2;
+  }
+
+  .file-card {
+    @apply rounded-md border border-[#d0d7de] bg-white p-3;
+  }
+
+  .file-card-head {
+    @apply flex items-start justify-between gap-2;
+  }
+
+  .file-card-name {
+    @apply break-words font-medium text-[#0969da] no-underline hover:underline;
+  }
+
+  .file-card-meta {
+    @apply mt-2 break-words;
+  }
+
+  .file-card-actions {
+    @apply shrink-0;
+  }
+
+  .action-menu {
+    @apply relative inline-block;
+  }
+
+  .action-trigger {
+    @apply min-w-[36px] px-2 text-lg leading-none;
+  }
+
+  .action-menu-items {
+    @apply absolute right-0 top-[calc(100%+0.25rem)] z-40 grid min-w-[220px] rounded-md border border-[#d0d7de] bg-white p-1 shadow-lg;
+  }
+
+  .action-item {
+    @apply cursor-pointer rounded-md border-0 bg-transparent px-2 py-1.5 text-left text-sm text-[#24292f] no-underline hover:bg-[#ddf4ff];
+  }
+
+  .upload {
+    @apply border-b border-[#d8dee4];
+  }
+
+  .dropzone {
+    @apply rounded-md border-2 border-dashed border-[#d0d7de] bg-[#f6f8fa] p-4 transition;
+  }
+
+  .dropzone.drag-over {
+    @apply border-[#1f6feb] bg-[#ddf4ff];
+  }
+
+  .link-label {
+    @apply cursor-pointer underline;
+  }
+
+  .preview {
+    @apply min-h-[220px] overflow-auto whitespace-pre-wrap rounded-md border border-[#d0d7de] bg-[#f6f8fa] p-3;
+  }
+
+  .preview img {
+    @apply max-w-full rounded-md;
+  }
+
+  .commands {
+    @apply min-h-[140px] whitespace-pre-wrap rounded-md border border-[#d0d7de] bg-[#f6f8fa] p-3;
+  }
+
+  .login-bg {
+    @apply grid min-h-screen place-items-center;
+  }
+
+  .login-card {
+    @apply m-6 w-[min(460px,94vw)] rounded-md border border-[#d0d7de] bg-white p-5;
+  }
+
+  .audit-list {
+    @apply max-h-[320px] list-disc overflow-auto pl-4;
+  }
+}
+
+.action-menu summary {
+  list-style: none;
+}
+
+.action-menu summary::-webkit-details-marker {
+  display: none;
+}
+
+dialog {
+  border: 1px solid #d0d7de;
+  border-radius: 0.5rem;
+  padding: 1rem;
+  width: min(680px, 94vw);
+}
+
+pre {
+  white-space: pre-wrap;
+  background: #0d1117;
+  color: #e6edf3;
+  border-radius: 0.5rem;
+  padding: 0.75rem;
+  overflow: auto;
+}
+
+@media (max-width: 980px) {
+  .gh-toolbar-filters input {
+    min-width: 140px;
+  }
+}

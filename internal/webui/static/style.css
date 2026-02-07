@@ -73,6 +73,13 @@ h2 { margin: 0.75rem 0; font-size: 1.1rem; }
   margin-bottom: 0.75rem;
   flex-wrap: wrap;
 }
+.toolbar-controls {
+  width: 100%;
+  justify-content: flex-end;
+}
+.toolbar-controls input {
+  min-width: 220px;
+}
 
 .breadcrumbs { display: flex; gap: 0.35rem; flex-wrap: wrap; }
 .breadcrumbs button {
@@ -85,6 +92,11 @@ h2 { margin: 0.75rem 0; font-size: 1.1rem; }
 
 .row { display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap; }
 .stack { display: grid; gap: 0.5rem; }
+.view-toggle .button.active {
+  background: var(--accent-strong);
+  color: #fff;
+  border-color: transparent;
+}
 
 input, select, textarea, button {
   font: inherit;
@@ -124,10 +136,125 @@ button.ghost, .button.ghost {
 .small { font-size: 0.85rem; }
 .hidden { display: none !important; }
 .error { color: #b91c1c; }
+.notice {
+  color: #1f2937;
+  background: #fef3c7;
+  border: 1px solid #fcd34d;
+  border-radius: calc(var(--radius) * 0.65);
+  padding: 0.6rem 0.7rem;
+}
 
 table { width: 100%; border-collapse: collapse; }
 th, td { text-align: left; padding: 0.5rem; border-bottom: 1px solid var(--border); vertical-align: top; }
 th { color: var(--muted); font-weight: 600; }
+.table-wrap {
+  overflow-x: auto;
+  overflow-y: visible;
+}
+.entry-link {
+  text-decoration: none;
+  color: inherit;
+  font-weight: 600;
+}
+.entry-link:hover {
+  text-decoration: underline;
+}
+
+.file-grid {
+  display: grid;
+  gap: 0.7rem;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+}
+
+.file-card {
+  border: 1px solid var(--border);
+  border-radius: calc(var(--radius) * 0.7);
+  padding: 0.7rem;
+  background: color-mix(in oklab, var(--bg-elevated) 95%, #f8fafc);
+}
+
+.file-card-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.4rem;
+  align-items: flex-start;
+}
+
+.file-card-name {
+  font-weight: 700;
+  text-decoration: none;
+  word-break: break-word;
+}
+
+.file-card-name:hover {
+  text-decoration: underline;
+}
+
+.file-kind {
+  font-size: 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 0.1rem 0.45rem;
+  white-space: nowrap;
+  color: var(--muted);
+}
+
+.file-card-meta {
+  margin: 0.55rem 0;
+  word-break: break-word;
+}
+
+.file-card-actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.action-menu {
+  position: relative;
+  display: inline-block;
+}
+
+.action-trigger {
+  min-width: 88px;
+}
+
+.action-menu summary {
+  list-style: none;
+}
+
+.action-menu summary::-webkit-details-marker {
+  display: none;
+}
+
+.action-menu-items {
+  position: absolute;
+  right: 0;
+  top: calc(100% + 0.25rem);
+  min-width: 220px;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-radius: calc(var(--radius) * 0.6);
+  box-shadow: 0 10px 24px rgba(2, 6, 23, 0.16);
+  display: grid;
+  padding: 0.35rem;
+  z-index: 40;
+}
+
+.action-item {
+  font: inherit;
+  border: 0;
+  border-radius: calc(var(--radius) * 0.45);
+  background: transparent;
+  color: var(--text);
+  text-decoration: none;
+  text-align: left;
+  padding: 0.45rem 0.5rem;
+  cursor: pointer;
+}
+
+.action-item:hover {
+  background: color-mix(in oklab, var(--accent) 12%, #fff);
+}
 
 .preview {
   min-height: 180px;
@@ -216,4 +343,11 @@ pre {
 
 @media (max-width: 980px) {
   .grid, .admin-grid { grid-template-columns: 1fr; }
+  .toolbar-controls {
+    justify-content: flex-start;
+  }
+  .toolbar-controls input {
+    min-width: 140px;
+    flex: 1;
+  }
 }

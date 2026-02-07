@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"net/url"
 	"os"
 	"path/filepath"
 	"runtime"
@@ -81,7 +82,7 @@ func Default(dataDir string) Config {
 		LogLevel:           "info",
 		DataDir:            dataDir,
 		Auth:               AuthOn,
-		GuestMode:          GuestOff,
+		GuestMode:          GuestRead,
 		ReadOnly:           false,
 		HTTPS:              false,
 		CertFile:           "",
@@ -103,9 +104,30 @@ func NormalizeBasePath(p string) string {
 	if p == "" || p == "/" {
 		return "/"
 	}
-	if !strings.HasPrefix(p, "/") {
-		p = "/" + p
+
+	// Coerce scheme-relative input like //files into a normal path prefix.
+	if strings.HasPrefix(p, "//") && !strings.Contains(p, "://") {
+		p = "/" + strings.TrimLeft(p, "/")
 	}
+
+	// If a full URL was provided by mistake, keep only its path component.
+	if strings.Contains(p, "://") {
+		u, err := url.Parse(p)
+		if err != nil {
+			return "/"
+		}
+		if u.Path == "" {
+			return "/"
+		}
+		p = u.Path
+	}
+
+	// Drop accidental query/fragment values from path-only config.
+	if i := strings.IndexAny(p, "?#"); i >= 0 {
+		p = p[:i]
+	}
+
+	p = "/" + strings.TrimLeft(p, "/")
 	p = strings.TrimRight(p, "/")
 	if p == "" {
 		return "/"

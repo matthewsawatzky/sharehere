@@ -59,7 +59,7 @@ func (a *App) handleShare(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		if err := a.templates.ExecuteTemplate(w, "share_upload.html", map[string]any{
-			"BasePath": a.opts.BasePath,
+			"BasePath": a.templateBasePath(),
 			"Token":    link.Token,
 			"Path":     link.Path,
 		}); err != nil {
@@ -139,9 +139,10 @@ func (a *App) handleShareBrowse(w http.ResponseWriter, r *http.Request, link db.
 		return
 	}
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
-	fmt.Fprintf(w, "<!doctype html><html><head><meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width, initial-scale=1\"><title>sharehere link</title><link rel=\"stylesheet\" href=\"%s/static/style.css\"></head><body><main class=\"panel\" style=\"margin:1rem;max-width:960px\"><h1>Shared folder</h1>", html.EscapeString(a.opts.BasePath))
+	fmt.Fprintf(w, "<!doctype html><html><head><meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width, initial-scale=1\"><title>sharehere link</title><link rel=\"stylesheet\" href=\"%s\"></head><body><main class=\"panel\" style=\"margin:1rem;max-width:960px\"><h1>Shared folder</h1>", html.EscapeString(a.route("/static/tailwind.css")))
 	fmt.Fprintf(w, "<p><strong>Path:</strong> <code>%s</code></p>", html.EscapeString(scopedRel))
-	zipURL := fmt.Sprintf("%s/s/%s?p=%s&download=1", a.opts.BasePath, link.Token, url.QueryEscape(scopedRel))
+	shareBase := a.route("/s/" + link.Token)
+	zipURL := fmt.Sprintf("%s?p=%s&download=1", shareBase, url.QueryEscape(scopedRel))
 	fmt.Fprintf(w, "<p><a class=\"button\" href=\"%s\">Download current path</a></p>", html.EscapeString(zipURL))
 	fmt.Fprint(w, "<ul>")
 	if scopedRel != link.Path {
@@ -149,16 +150,16 @@ func (a *App) handleShareBrowse(w http.ResponseWriter, r *http.Request, link db.
 		if parent == "." {
 			parent = ""
 		}
-		up := fmt.Sprintf("%s/s/%s?p=%s", a.opts.BasePath, link.Token, url.QueryEscape(parent))
+		up := fmt.Sprintf("%s?p=%s", shareBase, url.QueryEscape(parent))
 		fmt.Fprintf(w, "<li><a href=\"%s\">..</a></li>", html.EscapeString(up))
 	}
 	for _, e := range entries {
 		name := e.Name()
 		next := path.Join(scopedRel, name)
 		next = util.NormalizeRelPath(next)
-		href := fmt.Sprintf("%s/s/%s?p=%s", a.opts.BasePath, link.Token, url.QueryEscape(next))
+		href := fmt.Sprintf("%s?p=%s", shareBase, url.QueryEscape(next))
 		if !e.IsDir() {
-			href = fmt.Sprintf("%s/s/%s?p=%s&download=1", a.opts.BasePath, link.Token, url.QueryEscape(next))
+			href = fmt.Sprintf("%s?p=%s&download=1", shareBase, url.QueryEscape(next))
 		}
 		suffix := ""
 		if e.IsDir() {

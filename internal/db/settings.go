@@ -6,19 +6,19 @@ import (
 )
 
 var defaultSettings = map[string]string{
-	"guest_mode":            "off",
-	"max_upload_size_mb":    "1024",
-	"upload_allow_regex":    "",
-	"upload_deny_regex":     "",
-	"upload_subdir":         "",
-	"collision_policy":      "rename",
-	"default_share_expiry":  "24h",
-	"allow_delete":          "false",
-	"allow_rename":          "false",
-	"read_only":             "false",
-	"theme":                 "light",
-	"theme_overrides_json":  "{}",
-	"virus_scan_command":    "",
+	"guest_mode":           "read",
+	"max_upload_size_mb":   "1024",
+	"upload_allow_regex":   "",
+	"upload_deny_regex":    "",
+	"upload_subdir":        "",
+	"collision_policy":     "rename",
+	"default_share_expiry": "24h",
+	"allow_delete":         "false",
+	"allow_rename":         "false",
+	"read_only":            "false",
+	"theme":                "light",
+	"theme_overrides_json": "{}",
+	"virus_scan_command":   "",
 }
 
 func (s *Store) ensureDefaultSettings() error {

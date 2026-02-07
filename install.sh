@@ -15,15 +15,7 @@ need_cmd() {
 
 need_cmd curl
 need_cmd tar
-
-if command -v sha256sum >/dev/null 2>&1; then
-  SHA_CMD="sha256sum"
-elif command -v shasum >/dev/null 2>&1; then
-  SHA_CMD="shasum -a 256"
-else
-  echo "missing sha256 utility (sha256sum or shasum)" >&2
-  exit 1
-fi
+need_cmd go
 
 OS="$(uname -s | tr '[:upper:]' '[:lower:]')"
 ARCH="$(uname -m)"
@@ -54,39 +46,32 @@ if [ "$VERSION" = "latest" ]; then
   fi
 fi
 
-VERSION_STRIPPED="${VERSION#v}"
-ASSET="sharehere_${VERSION_STRIPPED}_${OS}_${ARCH}.tar.gz"
-BASE_URL="https://github.com/$REPO/releases/download/$VERSION"
 TMP_DIR="$(mktemp -d)"
 trap 'rm -rf "$TMP_DIR"' EXIT
 
-ARCHIVE="$TMP_DIR/$ASSET"
-CHECKSUMS="$TMP_DIR/checksums.txt"
+ARCHIVE="$TMP_DIR/source.tar.gz"
+SRC_ROOT="$TMP_DIR/src"
+BUILD_DIR="$TMP_DIR/build"
+mkdir -p "$SRC_ROOT" "$BUILD_DIR"
 
-echo "Downloading $ASSET from $REPO@$VERSION"
-curl -fL "$BASE_URL/$ASSET" -o "$ARCHIVE"
-curl -fL "$BASE_URL/checksums.txt" -o "$CHECKSUMS"
+echo "Downloading source for $REPO@$VERSION"
+curl -fL "https://github.com/$REPO/archive/refs/tags/$VERSION.tar.gz" -o "$ARCHIVE"
+tar -xzf "$ARCHIVE" -C "$SRC_ROOT"
 
-EXPECTED="$(grep "  $ASSET$" "$CHECKSUMS" | awk '{print $1}')"
-if [ -z "$EXPECTED" ]; then
-  echo "Checksum entry missing for $ASSET" >&2
+SRC_DIR="$(find "$SRC_ROOT" -mindepth 1 -maxdepth 1 -type d | head -n 1)"
+if [ -z "$SRC_DIR" ] || [ ! -f "$SRC_DIR/go.mod" ]; then
+  echo "could not locate Go source directory" >&2
   exit 1
 fi
 
-ACTUAL="$(eval "$SHA_CMD \"$ARCHIVE\"" | awk '{print $1}')"
-if [ "$EXPECTED" != "$ACTUAL" ]; then
-  echo "Checksum mismatch" >&2
-  echo "expected: $EXPECTED" >&2
-  echo "actual:   $ACTUAL" >&2
-  exit 1
-fi
-
-echo "Checksum verified"
-
-tar -xzf "$ARCHIVE" -C "$TMP_DIR"
-BIN="$TMP_DIR/sharehere"
+echo "Building sharehere for $OS/$ARCH"
+(
+  cd "$SRC_DIR"
+  GOOS="$OS" GOARCH="$ARCH" go build -trimpath -o "$BUILD_DIR/sharehere" ./cmd/sharehere
+)
+BIN="$BUILD_DIR/sharehere"
 if [ ! -f "$BIN" ]; then
-  echo "Binary not found in archive" >&2
+  echo "build failed: binary not found" >&2
   exit 1
 fi
 
@@ -102,6 +87,17 @@ else
 fi
 
 echo "Installed to $INSTALL_DIR/sharehere"
+
+if ! command -v sharehere >/dev/null 2>&1; then
+  case ":$PATH:" in
+    *":$INSTALL_DIR:"*) ;;
+    *)
+      echo "Note: $INSTALL_DIR is not in your PATH." >&2
+      echo "Add this to your shell profile:" >&2
+      echo "  export PATH=\"$INSTALL_DIR:\$PATH\"" >&2
+      ;;
+  esac
+fi
 
 echo "Run: sharehere --help"
 

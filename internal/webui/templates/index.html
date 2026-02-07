@@ -4,71 +4,105 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>sharehere</title>
-  <link rel="stylesheet" href="{{.BasePath}}/static/style.css" />
+  <link rel="stylesheet" href="{{.BasePath}}/static/tailwind.css" />
 </head>
 <body>
-  <header class="topbar">
-    <div>
-      <h1>sharehere</h1>
-      <p class="muted" id="sessionInfo">Loading session...</p>
-    </div>
-    <div class="row">
-      <a class="button ghost hidden" id="adminLink" href="{{.BasePath}}/admin">Admin</a>
-      <button class="button ghost" id="refreshBtn">Refresh</button>
-      <form method="post" action="{{.BasePath}}/logout" id="logoutForm" class="hidden">
-        <input type="hidden" name="_csrf" id="logoutCsrf" value="" />
-        <button class="button" type="submit">Logout</button>
-      </form>
+  <header class="gh-site-header">
+    <div class="gh-site-inner">
+      <div class="gh-brand">
+        <div class="gh-brand-chip">S</div>
+        <div>
+          <h1>sharehere</h1>
+          <p class="muted small">GitHub-style LAN file browser</p>
+        </div>
+      </div>
+      <div class="row">
+        <a class="button ghost hidden" id="adminLink" href="{{.BasePath}}/admin">Admin</a>
+        <button class="button ghost" id="refreshBtn">Refresh</button>
+        <form method="post" action="{{.BasePath}}/logout" id="logoutForm" class="hidden">
+          <input type="hidden" name="_csrf" id="logoutCsrf" value="" />
+          <button class="button" type="submit">Logout</button>
+        </form>
+      </div>
     </div>
   </header>
 
-  <main class="grid">
+  <main class="gh-main">
     <section class="panel">
-      <div class="toolbar">
-        <div id="breadcrumbs" class="breadcrumbs"></div>
-        <div class="row">
-          <input id="searchInput" placeholder="Quick filter..." />
+      <div class="gh-pathbar">
+        <span class="gh-owner">local</span>
+        <span class="gh-breadcrumb-sep">/</span>
+        <span class="gh-repo">shared-root</span>
+      </div>
+      <p class="muted" id="sessionInfo">Loading session...</p>
+    </section>
+
+    <div class="gh-layout">
+      <section class="panel gh-files-panel">
+        <div class="gh-toolbar-top">
+          <div id="breadcrumbs" class="breadcrumbs gh-breadcrumbs"></div>
+          <div class="row">
+            <a id="downloadFolderLink" class="button ghost" href="#">Download folder</a>
+            <button class="button ghost hidden" id="toggleUploadBtn" type="button">Upload files</button>
+          </div>
+        </div>
+
+        <div class="gh-toolbar-filters">
+          <input id="searchInput" placeholder="Find a file..." />
           <select id="sortSelect">
             <option value="name">Sort: name</option>
             <option value="date">Sort: date</option>
             <option value="size">Sort: size</option>
           </select>
+          <label class="remember-row small"><input type="checkbox" id="showHiddenToggle" /> Show hidden</label>
+          <div class="row view-toggle" role="group" aria-label="View mode">
+            <button class="button ghost active" id="listViewBtn" type="button">List</button>
+            <button class="button ghost" id="gridViewBtn" type="button">Grid</button>
+          </div>
         </div>
-      </div>
 
-      <div id="uploadPanel" class="upload panel-muted hidden">
-        <div id="dropZone" class="dropzone">
-          <p><strong>Drop files here</strong> or <label class="link-label"><input id="fileInput" type="file" multiple hidden />choose files</label></p>
-          <p class="muted small">Uploads stream directly to server and follow admin policy.</p>
+        <p id="entrySummary" class="muted small"></p>
+
+        <div id="uploadPanel" class="upload panel-muted hidden">
+          <div id="dropZone" class="dropzone">
+            <p><strong>Drop files here</strong> or <label class="link-label"><input id="fileInput" type="file" multiple hidden />choose files</label></p>
+            <p class="muted small">Uploads stream directly to the server and follow admin policy.</p>
+          </div>
+          <div id="uploadProgress" class="small"></div>
         </div>
-        <div id="uploadProgress"></div>
-      </div>
 
-      <table>
-        <thead>
-          <tr>
-            <th>Name</th>
-            <th>Size</th>
-            <th>Modified</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody id="fileRows"></tbody>
-      </table>
-    </section>
+        <div id="listView">
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Size</th>
+                  <th>Updated</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="fileRows"></tbody>
+            </table>
+          </div>
+        </div>
 
-    <aside class="panel">
-      <h2>Preview</h2>
-      <div id="previewPane" class="preview muted">Select a file to preview.</div>
-      <h2>Transfer Commands</h2>
-      <div class="stack">
-        <label>Remote user<input id="remoteUser" placeholder="user" /></label>
-        <label>Remote host<input id="remoteHost" placeholder="host" /></label>
-        <label>Port<input id="remotePort" value="22" /></label>
-        <label>Remote base path<input id="remoteBase" placeholder="/path/to/share" /></label>
-      </div>
-      <div id="commandsPane" class="commands muted">Select a file or folder to generate scp/rsync commands.</div>
-    </aside>
+        <div id="gridView" class="file-grid hidden"></div>
+      </section>
+
+      <aside class="panel gh-side-panel">
+        <h2>Preview</h2>
+        <div id="previewPane" class="preview muted">Select a file to preview.</div>
+        <h2>Transfer Commands</h2>
+        <div class="stack">
+          <label>Remote user<input id="remoteUser" placeholder="user" /></label>
+          <label>Remote host<input id="remoteHost" placeholder="host" /></label>
+          <label>Port<input id="remotePort" value="22" /></label>
+          <label>Remote base path<input id="remoteBase" placeholder="/path/to/share" /></label>
+        </div>
+        <div id="commandsPane" class="commands muted">Select a file or folder to generate scp/rsync commands.</div>
+      </aside>
+    </div>
   </main>
 
   <dialog id="commandModal">

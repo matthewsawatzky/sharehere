@@ -1,0 +1,12 @@
+{
+  "name": "sharehere-webui",
+  "private": true,
+  "version": "0.0.0",
+  "description": "Lightweight Tailwind build for embedded sharehere web UI",
+  "scripts": {
+    "build:tailwind": "tailwindcss -c tailwind.config.js -i ./internal/webui/static/tailwind.input.css -o ./internal/webui/static/tailwind.css --minify"
+  },
+  "devDependencies": {
+    "tailwindcss": "^3.4.17"
+  }
+}
