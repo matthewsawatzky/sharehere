@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>sharehere admin</title>
+  <link rel="stylesheet" href="{{.BasePath}}/static/style.css" />
+</head>
+<body>
+  <header class="topbar">
+    <h1>sharehere admin</h1>
+    <a class="button" href="{{.BasePath}}/">Back to browser</a>
+  </header>
+
+  <main class="admin-grid">
+    <section class="panel stack">
+      <h2>Server Settings</h2>
+      <label>Guest mode
+        <select id="guestMode">
+          <option value="off">Off</option>
+          <option value="read">Read-only</option>
+          <option value="upload">Upload-enabled</option>
+        </select>
+      </label>
+      <label>Max upload size (MB)<input id="maxUploadSizeMB" type="number" min="1" /></label>
+      <label>Allow regex<input id="uploadAllowRegex" /></label>
+      <label>Deny regex<input id="uploadDenyRegex" /></label>
+      <label>Upload subfolder<input id="uploadSubdir" /></label>
+      <label>Collision policy
+        <select id="collisionPolicy">
+          <option value="rename">Rename with suffix</option>
+          <option value="overwrite">Overwrite</option>
+        </select>
+      </label>
+      <label>Default share expiry<input id="defaultShareExpiry" placeholder="24h" /></label>
+      <label><input id="allowDelete" type="checkbox" /> Enable delete</label>
+      <label><input id="allowRename" type="checkbox" /> Enable rename/move</label>
+      <label><input id="readOnly" type="checkbox" /> Read-only mode</label>
+      <label>Theme
+        <select id="theme"></select>
+      </label>
+      <label>Theme overrides JSON<textarea id="themeOverridesJSON" rows="4"></textarea></label>
+      <label>Virus scan command<input id="virusScanCommand" placeholder="optional hook command" /></label>
+      <button id="saveSettings">Save settings</button>
+      <p id="settingsStatus" class="muted"></p>
+    </section>
+
+    <section class="panel stack">
+      <h2>User Management</h2>
+      <div class="row">
+        <input id="newUsername" placeholder="username" />
+        <select id="newRole">
+          <option value="user">user</option>
+          <option value="admin">admin</option>
+        </select>
+        <input id="newPassword" type="password" placeholder="password" />
+        <button id="createUser">Create</button>
+      </div>
+      <table>
+        <thead><tr><th>User</th><th>Role</th><th>Status</th><th>Actions</th></tr></thead>
+        <tbody id="userRows"></tbody>
+      </table>
+    </section>
+
+    <section class="panel stack">
+      <h2>Share Links</h2>
+      <table>
+        <thead><tr><th>Token</th><th>Path</th><th>Mode</th><th>Expiry</th><th>Last access</th><th>Actions</th></tr></thead>
+        <tbody id="linkRows"></tbody>
+      </table>
+    </section>
+
+    <section class="panel stack">
+      <h2>Audit Log</h2>
+      <button id="refreshAudit">Refresh log</button>
+      <ul id="auditRows" class="audit-list"></ul>
+    </section>
+  </main>
+
+  <script>
+    window.SHAREHERE_BOOT = { basePath: "{{.BasePath}}", version: "{{.Version}}" };
+  </script>
+  <script src="{{.BasePath}}/static/admin.js"></script>
+</body>
+</html>

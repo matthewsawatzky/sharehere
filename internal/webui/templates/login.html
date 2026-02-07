@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>sharehere login</title>
+  <link rel="stylesheet" href="{{.BasePath}}/static/style.css" />
+</head>
+<body class="login-bg">
+  <main class="login-card">
+    <h1>sharehere</h1>
+    <p class="muted">Sign in to browse and manage shared files.</p>
+    {{if .Error}}<p class="error">{{.Error}}</p>{{end}}
+    <form method="post" action="{{.BasePath}}/login" class="stack">
+      <input type="hidden" name="_csrf" value="{{.CSRFToken}}" />
+      <label>Username</label>
+      <input required name="username" autocomplete="username" />
+      <label>Password</label>
+      <input required name="password" type="password" autocomplete="current-password" />
+      <label class="remember-row"><input type="checkbox" name="remember" value="1" /> Remember me</label>
+      <button type="submit">Sign in</button>
+    </form>
+    <p class="muted small">LAN exposure warning: anyone on your network can reach this URL unless auth and firewall are configured.</p>
+  </main>
+</body>
+</html>

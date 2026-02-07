@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="700" viewBox="0 0 1200 700" role="img" aria-label="sharehere admin mock screenshot">
+  <rect width="1200" height="700" fill="#fff7ed"/>
+  <rect x="30" y="24" width="1140" height="64" rx="14" fill="#ffffff" stroke="#fdba74"/>
+  <text x="60" y="64" font-family="Segoe UI, sans-serif" font-size="30" fill="#7c2d12">sharehere admin</text>
+  <g fill="#ffffff" stroke="#fdba74">
+    <rect x="30" y="110" width="560" height="260" rx="14"/>
+    <rect x="610" y="110" width="560" height="260" rx="14"/>
+    <rect x="30" y="390" width="560" height="280" rx="14"/>
+    <rect x="610" y="390" width="560" height="280" rx="14"/>
+  </g>
+  <g fill="#ea580c" font-family="Segoe UI, sans-serif" font-size="20">
+    <text x="60" y="150">Server Settings</text>
+    <text x="640" y="150">User Management</text>
+    <text x="60" y="430">Share Links</text>
+    <text x="640" y="430">Audit Log</text>
+  </g>
+</svg>

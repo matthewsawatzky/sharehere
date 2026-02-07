@@ -1,0 +1,25 @@
+# Binaries
+sharehere
+*.exe
+*.dll
+*.so
+*.dylib
+
+# Build output
+/bin/
+/dist/
+
+# Test output
+*.out
+coverage.txt
+
+# Data/config
+*.db
+*.db-wal
+*.db-shm
+certs/
+
+# IDE
+.DS_Store
+.vscode/
+.idea/

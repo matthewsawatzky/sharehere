@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>sharehere</title>
+  <link rel="stylesheet" href="{{.BasePath}}/static/style.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div>
+      <h1>sharehere</h1>
+      <p class="muted" id="sessionInfo">Loading session...</p>
+    </div>
+    <div class="row">
+      <a class="button ghost hidden" id="adminLink" href="{{.BasePath}}/admin">Admin</a>
+      <button class="button ghost" id="refreshBtn">Refresh</button>
+      <form method="post" action="{{.BasePath}}/logout" id="logoutForm" class="hidden">
+        <input type="hidden" name="_csrf" id="logoutCsrf" value="" />
+        <button class="button" type="submit">Logout</button>
+      </form>
+    </div>
+  </header>
+
+  <main class="grid">
+    <section class="panel">
+      <div class="toolbar">
+        <div id="breadcrumbs" class="breadcrumbs"></div>
+        <div class="row">
+          <input id="searchInput" placeholder="Quick filter..." />
+          <select id="sortSelect">
+            <option value="name">Sort: name</option>
+            <option value="date">Sort: date</option>
+            <option value="size">Sort: size</option>
+          </select>
+        </div>
+      </div>
+
+      <div id="uploadPanel" class="upload panel-muted hidden">
+        <div id="dropZone" class="dropzone">
+          <p><strong>Drop files here</strong> or <label class="link-label"><input id="fileInput" type="file" multiple hidden />choose files</label></p>
+          <p class="muted small">Uploads stream directly to server and follow admin policy.</p>
+        </div>
+        <div id="uploadProgress"></div>
+      </div>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Size</th>
+            <th>Modified</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="fileRows"></tbody>
+      </table>
+    </section>
+
+    <aside class="panel">
+      <h2>Preview</h2>
+      <div id="previewPane" class="preview muted">Select a file to preview.</div>
+      <h2>Transfer Commands</h2>
+      <div class="stack">
+        <label>Remote user<input id="remoteUser" placeholder="user" /></label>
+        <label>Remote host<input id="remoteHost" placeholder="host" /></label>
+        <label>Port<input id="remotePort" value="22" /></label>
+        <label>Remote base path<input id="remoteBase" placeholder="/path/to/share" /></label>
+      </div>
+      <div id="commandsPane" class="commands muted">Select a file or folder to generate scp/rsync commands.</div>
+    </aside>
+  </main>
+
+  <dialog id="commandModal">
+    <h3>Transfer commands</h3>
+    <pre id="commandText"></pre>
+    <div class="row">
+      <button id="copyCmd">Copy</button>
+      <button id="closeCmd">Close</button>
+    </div>
+  </dialog>
+
+  <script>
+    window.SHAREHERE_BOOT = {
+      basePath: "{{.BasePath}}",
+      version: "{{.Version}}"
+    };
+  </script>
+  <script src="{{.BasePath}}/static/app.js"></script>
+</body>
+</html>

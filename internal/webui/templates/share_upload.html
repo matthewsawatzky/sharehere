@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>sharehere upload link</title>
+  <link rel="stylesheet" href="{{.BasePath}}/static/style.css" />
+</head>
+<body class="login-bg">
+  <main class="login-card">
+    <h1>Upload to shared dropbox</h1>
+    <p class="muted">This link only accepts uploads. Files are written to: <code>{{.Path}}</code></p>
+    <div class="dropzone" id="dropZone">
+      <p><label class="link-label"><input type="file" id="fileInput" multiple hidden />Choose files</label> or drop files here.</p>
+    </div>
+    <div id="uploadProgress"></div>
+  </main>
+
+  <script>
+    window.SHAREHERE_BOOT = {
+      basePath: "{{.BasePath}}",
+      token: "{{.Token}}"
+    };
+  </script>
+  <script src="{{.BasePath}}/static/share-upload.js"></script>
+</body>
+</html>
